@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Summa: pindai struk, patungan beres</title>
-<meta name="description" content="Aplikasi catatan keuangan pribadi dan bersama untuk anak kos, dengan pemindai struk. Versi uji coba penelitian untuk Android.">
+<title>Summa: scan receipts, settle splits</title>
+<meta name="description" content="A personal and shared finance app for housemates, with a receipt scanner. Research test build for Android.">
 <!-- Pratinjau tautan (WhatsApp, Telegram). Ganti og:url bila domain sendiri sudah aktif. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Summa">
-<meta property="og:title" content="Summa: pindai struk, patungan beres">
-<meta property="og:description" content="Aplikasi catatan keuangan pribadi dan bersama untuk anak kos, dengan pemindai struk. Versi uji coba penelitian untuk Android.">
+<meta property="og:title" content="Summa: scan receipts, settle splits">
+<meta property="og:description" content="A personal and shared finance app for housemates, with a receipt scanner. Research test build for Android.">
 <meta property="og:url" content="https://summa-web-pearl.vercel.app/">
-<meta property="og:locale" content="id_ID">
-<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
 <meta name="twitter:card" content="summary">
 <link rel="icon"href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23DFFF00'/%3E%3Ctext x='16' y='23' font-family='system-ui' font-size='20' font-weight='700' text-anchor='middle' fill='%23111'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -134,8 +134,8 @@
 
   /* ---------- mockup ponsel ---------- */
   .peraga { justify-self: center; width: 100%; max-width: 336px; }
-  .ponsel { background: var(--kartu); border: 3px solid #111111; border-radius: 40px; box-shadow: 10px 10px 0 var(--bayang); padding: 14px; }
-  .lensa { width: 90px; height: 8px; border-radius: 99px; background: #111111; margin: 0 auto 12px; }
+  .ponsel { background: var(--kartu); border: 3px solid var(--garis); border-radius: 40px; box-shadow: 10px 10px 0 var(--bayang); padding: 14px; }
+  .lensa { width: 90px; height: 8px; border-radius: 99px; background: var(--garis); margin: 0 auto 12px; }
   .tab { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
   .tab button { border: 2px solid var(--garis); background: var(--redup); border-radius: 10px; min-height: 40px; font-size: 13px; font-weight: 800; cursor: pointer; transition: transform .15s ease; }
   .tab button:active { transform: scale(.96); }
@@ -276,7 +276,7 @@
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="4" y="4" width="29" height="29" rx="7" fill="#111111"/><rect x="1.25" y="1.25" width="28.5" height="28.5" rx="7" fill="#DFFF00" stroke="#111111" stroke-width="2.5"/><path d="M20.5 10.5C19 9 13 8.3 11.5 11.4c-1.7 3.8 8 3.9 8.4 7.9.4 3.9-6.4 4.6-9.4 2.1" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="square"/></svg>
       <span class="nama">Summa</span> <span class="versi"><span data-l="id">v1.0 Uji Coba</span><span data-l="en">v1.0 Test Build</span></span>
     </a>
-    <nav class="tautan" aria-label="Navigasi">
+    <nav class="tautan" aria-label="Navigation">
       <a href="#fitur"><span data-l="id">Fitur</span><span data-l="en">Features</span></a>
       <a href="#cara"><span data-l="id">Cara Kerja</span><span data-l="en">How It Works</span></a>
       <a href="#privasi"><span data-l="id">Privasi AI</span><span data-l="en">AI Privacy</span></a>
@@ -284,8 +284,8 @@
     </nav>
     <div class="kendali">
       <div class="bahasa" role="group" aria-label="Bahasa / Language">
-        <button type="button" data-bahasa="id" aria-pressed="true">ID</button>
-        <button type="button" data-bahasa="en" aria-pressed="false">EN</button>
+        <button type="button" data-bahasa="id" aria-pressed="false">ID</button>
+        <button type="button" data-bahasa="en" aria-pressed="true">EN</button>
       </div>
       <button class="tema" type="button" id="tema">
         <span class="sr"><span data-l="id">Ganti tema terang atau gelap</span><span data-l="en">Switch light or dark theme</span></span>
@@ -352,7 +352,7 @@
             <div class="lembar">
               <div class="isian utama" style="--n:0"><span>Total<small><span data-l="id">Cocok dengan jumlah barang</span><span data-l="en">Matches the item sum</span></small></span><b>RM 61,20</b></div>
               <div class="isian" style="--n:1"><span>Tunai / Cash<small><span data-l="id">Periksa sebelum disimpan</span><span data-l="en">Check before saving</span></small></span><b>RM 61,20</b></div>
-              <div class="isian kosong" style="--n:2"><span><span data-l="id">Pajak</span><span data-l="en">Tax</span><small><span data-l="id">Tidak terbaca, dibiarkan kosong. Isi sendiri bila ada.</span><span data-l="en">Not read, left empty. Fill it in if there is one.</span></small></span><b aria-label="kosong">...</b></div>
+              <div class="isian kosong" style="--n:2"><span><span data-l="id">Pajak</span><span data-l="en">Tax</span><small><span data-l="id">Tidak terbaca, dibiarkan kosong. Isi sendiri bila ada.</span><span data-l="en">Not read, left empty. Fill it in if there is one.</span></small></span><b><span aria-hidden="true">...</span><span class="sr"><span data-l="id">kosong</span><span data-l="en">empty</span></span></b></div>
               <div class="setuju" style="--n:3"><span data-l="id">Saya sudah memeriksa totalnya</span><span data-l="en">I have checked the total</span></div>
             </div>
           </div>
@@ -527,7 +527,7 @@
     semua('[data-bahasa]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bahasa === l)); });
     document.title = l === 'en' ? 'Summa: scan receipts, settle splits' : 'Summa: pindai struk, patungan beres';
   }
-  pakaiBahasa(akar.lang === 'en' ? 'en' : 'id');
+  pakaiBahasa(akar.lang === 'id' ? 'id' : 'en'); // bawaan Inggris, pilihan tersimpan menang
   semua('[data-bahasa]').forEach(function (b) {
     b.addEventListener('click', function () { pakaiBahasa(b.dataset.bahasa); simpan('summa_bahasa', b.dataset.bahasa); });
   });
