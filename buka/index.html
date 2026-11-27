@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Summa: Open Shared Bill</title>
+<meta name="description" content="Open this group bill directly in the Summa mobile app to review items, upload transfer proof, or confirm settlement.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Summa">
+<meta property="og:title" content="Summa: Open Shared Bill">
+<meta property="og:description" content="Tap to open this group bill directly in Summa.">
+<meta property="og:url" content="https://summa.uno/buka">
+<meta property="og:image" content="https://summa.uno/assets/images/icon.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:alt" content="Summa official logo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://summa.uno/assets/images/icon.png">
+<link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">
+<link rel="icon" type="image/png" sizes="48x48" href="../assets/images/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap">
+<script>
+  (function (d) {
+    try {
+      var t = localStorage.getItem('summa_tema'), l = localStorage.getItem('summa_bahasa');
+      if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t);
+      if (l === 'id' || l === 'en') d.lang = l;
+    } catch (e) {}
+  })(document.documentElement);
+</script>
+<style>
+  /* Palet Neo-Brutalisme Summa. Bebas warna hijau lunas aplikasi. */
+  :root {
+    color-scheme: light;
+    --latar: #F4F0E4; --kartu: #FFFDF6; --tinta: #111111; --tinta2: #565656;
+    --garis: #111111; --merek: #DFFF00; --biru: #73D7FF; --sorot: #FFE566;
+    --redup: #EFECE2; --bayangan: var(--garis); --bayang: var(--bayangan);
+    --judul: "Space Grotesk", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --isi: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --latar: #121418; --kartu: #1B1E26; --tinta: #F4F4F5; --tinta2: #9CA3AF;
+      --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayangan: var(--garis); --bayang: var(--bayangan);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --latar: #121418; --kartu: #1B1E26; --tinta: #F4F4F5; --tinta2: #9CA3AF;
+    --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayangan: var(--garis); --bayang: var(--bayangan);
+  }
+
+  * { box-sizing: border-box; }
+  html[lang="id"] [data-l="en"], html[lang="en"] [data-l="id"] { display: none !important; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--latar);
+    color: var(--tinta);
+    font: 16px/1.55 var(--isi);
+    display: flex;
+    flex-direction: column;
+  }
+  h1 { font-family: var(--judul); line-height: 1.14; letter-spacing: -.02em; margin: 0; font-size: clamp(24px, 5vw, 32px); }
+  p { margin: 0; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; }
+
+  .nav {
+    border-bottom: 2px solid var(--garis);
+    background: var(--latar);
+    padding: 10px 16px;
+  }
+  .nav-isi {
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .merek {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font: 700 20px var(--judul);
+    text-decoration: none;
+  }
+  .logo-utama {
+    width: 34px;
+    height: 34px;
+    display: block;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+  .kendali { display: flex; align-items: center; gap: 8px; }
+  .bahasa {
+    display: flex;
+    border: 2px solid var(--garis);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--kartu);
+  }
+  .bahasa button {
+    border: 0;
+    background: none;
+    padding: 0 10px;
+    height: 34px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .bahasa button[aria-pressed="true"] {
+    background: var(--merek);
+    color: #111111;
+  }
+
+  main {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px 40px;
+  }
+  .kartu {
+    width: 100%;
+    max-width: 460px;
+    background: var(--kartu);
+    border: 2.5px solid var(--garis);
+    border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--bayangan);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .pil {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--biru);
+    color: #111111;
+    border: 2px solid var(--garis);
+    border-radius: 999px;
+    box-shadow: 2px 2px 0 var(--bayangan);
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .deskripsi { color: var(--tinta2); font-size: 15px; }
+  .kotak-status {
+    background: var(--redup);
+    border: 1.5px solid var(--garis);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--tinta2);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .kotak-status strong { color: var(--tinta); font-weight: 800; }
+  .deret-tombol {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .tombol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 18px;
+    font-weight: 800;
+    font-size: 15px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    background: var(--merek);
+    color: #111111;
+    border: 2.5px solid var(--garis);
+    border-radius: 12px;
+    box-shadow: 4px 4px 0 var(--bayangan);
+    transition: transform .15s ease;
+  }
+  .tombol.sunyi {
+    background: var(--kartu);
+    color: var(--tinta);
+    border-color: var(--garis);
+  }
+  .tombol:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--bayangan); }
+  .tombol:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--bayangan); }
+  .kaki {
+    text-align: center;
+    font-size: 13px;
+    color: var(--tinta2);
+    padding-top: 4px;
+  }
+  .kaki a { font-weight: 700; text-decoration: underline; }
+</style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-isi">
+      <a class="merek" href="/">
+        <img class="logo-utama" src="../assets/images/logo.svg" width="34" height="34" alt="" aria-hidden="true">
+        <span>Summa</span>
+      </a>
+      <div class="kendali">
+        <div class="bahasa" role="group" aria-label="Language">
+          <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-set-lang="id" aria-pressed="false">ID</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <article class="kartu">
+      <span class="pil">
+        <span data-l="en">Shared Group Bill</span>
+        <span data-l="id">Tagihan Grup Bersama</span>
+      </span>
+
+      <h1>
+        <span data-l="en">Open this bill in Summa</span>
+        <span data-l="id">Buka tagihan ini di Summa</span>
+      </h1>
+
+      <p class="deskripsi">
+        <span data-l="en">Tap the button below to jump straight to your group bill in the Summa mobile app, attach transfer proof, or confirm settlement.</span>
+        <span data-l="id">Ketuk tombol di bawah untuk langsung menuju rincian tagihan grup di aplikasi Summa, melampirkan bukti transfer, atau mengonfirmasi pelunasan.</span>
+      </p>
+
+      <div class="kotak-status" id="kotak-info">
+        <strong>
+          <span data-l="en" id="status-en">Verified group deep link ready</span>
+          <span data-l="id" id="status-id">Tautan grup terverifikasi siap dibuka</span>
+        </strong>
+        <span data-l="en">Only members of this group can view the bill details after signing in.</span>
+        <span data-l="id">Hanya anggota grup ini yang dapat melihat rincian tagihan setelah masuk.</span>
+      </div>
+
+      <div class="deret-tombol">
+        <a id="tombol-buka" class="tombol" href="summa://buka">
+          <span data-l="en">Open in Summa</span>
+          <span data-l="id">Buka di Summa</span>
+        </a>
+
+        <a
+          id="tombol-unduh"
+          class="tombol sunyi"
+          href="https://github.com/klissh/summa-web/releases/latest/download/Summa.apk">
+          <span data-l="en">Download Summa (.apk)</span>
+          <span data-l="id">Unduh Summa (.apk)</span>
+        </a>
+      </div>
+
+      <p class="kaki">
+        <a href="/">
+          <span data-l="en">Learn more at summa.uno</span>
+          <span data-l="id">Pelajari selengkapnya di summa.uno</span>
+        </a>
+      </p>
+    </article>
+  </main>
+
+  <script>
+    (function () {
+      var d = document.documentElement;
+      var tombolBahasa = document.querySelectorAll('[data-set-lang]');
+      function segarkanBahasa(lang) {
+        d.lang = lang;
+        for (var i = 0; i < tombolBahasa.length; i++) {
+          var b = tombolBahasa[i];
+          b.setAttribute('aria-pressed', b.getAttribute('data-set-lang') === lang ? 'true' : 'false');
+        }
+        try { localStorage.setItem('summa_bahasa', lang); } catch (e) {}
+      }
+      for (var i = 0; i < tombolBahasa.length; i++) {
+        tombolBahasa[i].addEventListener('click', function () {
+          segarkanBahasa(this.getAttribute('data-set-lang') || 'en');
+        });
+      }
+      segarkanBahasa(d.lang === 'id' ? 'id' : 'en');
+
+      var POLA_ID = /^[A-Za-z0-9-]{8,64}$/;
+      function saringId(v) {
+        return typeof v === 'string' && POLA_ID.test(v) ? v : null;
+      }
+
+      var q = new URLSearchParams(window.location.search);
+      var grup = saringId(q.get('grup')) || saringId(q.get('kamar'));
+      var tagihan = saringId(q.get('tagihan'));
+      var belanja = saringId(q.get('belanja'));
+      var kebutuhan = saringId(q.get('kebutuhan'));
+      var jenisRaw = q.get('jenis');
+      var jenis = jenisRaw === 'kebutuhan' ? 'kebutuhan' : 'belanja';
+
+      var paramsSkema = new URLSearchParams();
+      if (grup) {
+        paramsSkema.set('grup', grup);
+        if (tagihan) {
+          paramsSkema.set('tagihan', tagihan);
+          if (jenis === 'kebutuhan') paramsSkema.set('jenis', 'kebutuhan');
+        } else if (belanja) {
+          paramsSkema.set('tagihan', belanja);
+        } else if (kebutuhan) {
+          paramsSkema.set('tagihan', kebutuhan);
+          paramsSkema.set('jenis', 'kebutuhan');
+        }
+      }
+
+      var qs = paramsSkema.toString();
+      var targetSkema = 'summa://buka' + (qs ? '?' + qs : '');
+      var tombolBuka = document.getElementById('tombol-buka');
+      if (tombolBuka) {
+        tombolBuka.setAttribute('href', targetSkema);
+      }
+
+      var statusEn = document.getElementById('status-en');
+      var statusId = document.getElementById('status-id');
+      if (!grup && statusEn && statusId) {
+        statusEn.textContent = 'Ready to open the Group tab in Summa';
+        statusId.textContent = 'Siap membuka tab Grup di Summa';
+      }
+
+      if (grup) {
+        setTimeout(function () {
+          window.location.href = targetSkema;
+        }, 120);
+      }
+    })();
+  </script>
+</body>
+</html>

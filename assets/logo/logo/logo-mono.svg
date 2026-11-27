@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 340 340" width="1024" height="1024">
+  <title>Summa — logo hitam-putih untuk cetak</title>
+  <defs><mask id="slot" maskUnits="userSpaceOnUse" x="-100" y="-100" width="700" height="500"><rect x="-100" y="-100" width="700" height="500" fill="#fff"/><path d="M102 100 H346 M-46 200 H198" fill="none" stroke="#000" stroke-width="44" stroke-linecap="round"/></mask></defs>
+  <rect width="300" height="300" rx="56" fill="#000" mask="url(#slot)"/>
+</svg>

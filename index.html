@@ -5,16 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Summa: scan receipts, settle splits</title>
 <meta name="description" content="A personal and shared finance app for housemates, with a receipt scanner. Research test build for Android.">
-<!-- Pratinjau tautan (WhatsApp, Telegram). Ganti og:url bila domain sendiri sudah aktif. -->
+<!-- Pratinjau tautan (WhatsApp, Telegram). -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Summa">
 <meta property="og:title" content="Summa: scan receipts, settle splits">
 <meta property="og:description" content="A personal and shared finance app for housemates, with a receipt scanner. Research test build for Android.">
-<meta property="og:url" content="https://summa-web-pearl.vercel.app/">
+<meta property="og:url" content="https://summa.uno/">
+<meta property="og:image" content="https://summa.uno/assets/images/icon.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:alt" content="Summa official logo">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="id_ID">
 <meta name="twitter:card" content="summary">
-<link rel="icon"href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23DFFF00'/%3E%3Ctext x='16' y='23' font-family='system-ui' font-size='20' font-weight='700' text-anchor='middle' fill='%23111'%3ES%3C/text%3E%3C/svg%3E">
+<meta name="twitter:image" content="https://summa.uno/assets/images/icon.png">
+<link rel="icon" type="image/svg+xml" href="./assets/images/logo.svg">
+<link rel="icon" type="image/png" sizes="48x48" href="./assets/images/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/images/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap">
@@ -36,7 +44,7 @@
     color-scheme: light;
     --latar: #F4F0E4; --kartu: #FFFDF6; --tinta: #111111; --tinta2: #565656;
     --garis: #111111; --merek: #DFFF00; --biru: #73D7FF; --sorot: #FFE566;
-    --redup: #EFECE2; --bayang: #111111;
+    --redup: #EFECE2; --bayangan: var(--garis); --bayang: var(--bayangan);
     --judul: "Space Grotesk", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --isi: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
@@ -44,13 +52,13 @@
     :root:not([data-theme="light"]) {
       color-scheme: dark;
       --latar: #121418; --kartu: #1B1E26; --tinta: #F4F4F5; --tinta2: #9CA3AF;
-      --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayang: #000000;
+      --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayangan: var(--garis); --bayang: var(--bayangan);
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
     --latar: #121418; --kartu: #1B1E26; --tinta: #F4F4F5; --tinta2: #9CA3AF;
-    --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayang: #000000;
+    --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayangan: var(--garis); --bayang: var(--bayangan);
   }
 
   * { box-sizing: border-box; }
@@ -73,17 +81,17 @@
   .tombol {
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     min-height: 48px; padding: 12px 20px; font-weight: 800; text-decoration: none; cursor: pointer;
-    background: var(--merek); color: #111111; border: 2.5px solid #111111; border-radius: 12px;
-    box-shadow: 4px 4px 0 var(--bayang); transition: transform .15s ease;
+    background: var(--merek); color: #111111; border: 2.5px solid var(--garis); border-radius: 12px;
+    box-shadow: 4px 4px 0 var(--bayangan); transition: transform .15s ease;
   }
   .tombol.sunyi { background: var(--kartu); color: var(--tinta); border-color: var(--garis); }
-  .tombol.kecil { min-height: 40px; padding: 6px 12px; font-size: 14px; box-shadow: 3px 3px 0 var(--bayang); border-radius: 10px; border-width: 2px; }
-  .tombol:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--bayang); }
-  .tombol:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--bayang); }
-  .kartu { background: var(--kartu); border: 2px solid var(--garis); border-radius: 16px; box-shadow: 4px 4px 0 var(--bayang); padding: 22px; }
+  .tombol.kecil { min-height: 40px; padding: 6px 12px; font-size: 14px; box-shadow: 3px 3px 0 var(--bayangan); border-radius: 10px; border-width: 2px; }
+  .tombol:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--bayangan); }
+  .tombol:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--bayangan); }
+  .kartu { background: var(--kartu); border: 2px solid var(--garis); border-radius: 16px; box-shadow: 4px 4px 0 var(--bayangan); padding: 22px; }
   .angkat { transition: transform .18s ease; }
-  .angkat:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--bayang); }
-  .pil { display: inline-block; background: var(--merek); color: #111111; border: 2px solid #111111; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .angkat:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--bayangan); }
+  .pil { display: inline-block; background: var(--merek); color: #111111; border: 2px solid var(--garis); border-radius: 999px; box-shadow: 2px 2px 0 var(--bayangan); padding: 4px 12px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 
   /* ---------- gulir muncul ---------- */
   .js .muncul { opacity: 0; translate: 0 22px; }
@@ -97,8 +105,9 @@
   .progres { position: fixed; inset: 0 0 auto 0; height: 4px; background: #DFFF00; transform: scaleX(0); transform-origin: left; z-index: 30; }
   .nav { position: sticky; top: 0; z-index: 20; background: var(--latar); border-bottom: 2px solid var(--garis); padding-top: 4px; }
   .nav .wadah { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; }
-  .merek { display: flex; align-items: center; gap: 8px; min-height: 56px; font: 700 20px var(--judul); text-decoration: none; }
-  .versi { font: 800 10px var(--isi); letter-spacing: .08em; text-transform: uppercase; border: 1.5px solid #111111; background: var(--sorot); color: #111111; border-radius: 6px; padding: 2px 6px; white-space: nowrap; }
+  .merek { display: flex; align-items: center; gap: 9px; min-height: 56px; font: 700 20px var(--judul); text-decoration: none; }
+  .logo-utama { width: 34px; height: 34px; display: block; flex-shrink: 0; object-fit: contain; }
+  .versi { font: 800 10px var(--isi); letter-spacing: .08em; text-transform: uppercase; border: 1.5px solid var(--garis); background: var(--sorot); color: #111111; border-radius: 6px; box-shadow: 2px 2px 0 var(--bayangan); padding: 2px 6px; white-space: nowrap; }
   .tautan { order: 5; width: 100%; display: flex; justify-content: space-between; gap: 4px; overflow-x: auto; padding-bottom: 6px; }
   .tautan a { font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; padding: 6px 2px; border-bottom: 2.5px solid transparent; }
   .tautan a:hover { border-bottom-color: var(--tinta); }
@@ -134,16 +143,18 @@
 
   /* ---------- mockup ponsel ---------- */
   .peraga { justify-self: center; width: 100%; max-width: 336px; }
-  .ponsel { background: var(--kartu); border: 3px solid var(--garis); border-radius: 40px; box-shadow: 10px 10px 0 var(--bayang); padding: 14px; }
+  .ponsel { background: var(--kartu); border: 3px solid var(--garis); border-radius: 40px; box-shadow: 10px 10px 0 var(--bayangan); padding: 14px; }
   .lensa { width: 90px; height: 8px; border-radius: 99px; background: var(--garis); margin: 0 auto 12px; }
   .tab { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
-  .tab button { border: 2px solid var(--garis); background: var(--redup); border-radius: 10px; min-height: 40px; font-size: 13px; font-weight: 800; cursor: pointer; transition: transform .15s ease; }
+  .tab button { border: 2px solid var(--garis); background: var(--redup); color: var(--tinta); border-radius: 10px; min-height: 40px; font-size: 13px; font-weight: 800; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
   .tab button:active { transform: scale(.96); }
-  .tab button[aria-selected="true"] { background: var(--merek); color: #111111; border-color: #111111; }
-  .panggung { display: grid; }
-  .panel { grid-area: 1 / 1; min-width: 0; opacity: 0; visibility: hidden; translate: 14px 0; transition: opacity .35s ease, translate .35s ease, visibility 0s .35s; }
-  .panel.aktif { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .35s ease, translate .35s ease; }
-  .struk { position: relative; overflow: hidden; background: #FFFFFF; color: #111111; border: 2px solid #111111; border-radius: 12px; padding: 14px 12px; font: 600 12.5px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .tab button[aria-selected="true"] { background: var(--merek); color: #111111; border-color: var(--garis); box-shadow: 2px 2px 0 var(--bayangan); }
+  .panggung { min-height: 282px; }
+  .panel { display: none; min-width: 0; }
+  .panel[hidden] { display: none !important; }
+  .panel.aktif { display: block; animation: panelMasuk .22s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes panelMasuk { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .struk { position: relative; overflow: hidden; background: #FFFDF6; color: #111111; border: 2px solid var(--garis); border-radius: 12px; box-shadow: 3px 3px 0 var(--bayangan); padding: 14px 12px; font: 600 12.5px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; }
   .struk .toko { text-align: center; font-weight: 800; border-bottom: 2px dashed #111111; padding-bottom: 8px; margin-bottom: 6px; }
   .baris { position: relative; display: flex; justify-content: space-between; gap: 8px; padding: 5px 6px; }
   .baris > span { position: relative; }
@@ -157,37 +168,39 @@
   .panel.aktif .laser { animation: sapu 2.4s ease-in-out infinite alternate; }
   @keyframes sapu { from { transform: translateY(2%); } to { transform: translateY(96%); } }
   .hasil { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .cip { border: 2px solid #111111; border-radius: 8px; background: var(--sorot); color: #111111; font-size: 11.5px; font-weight: 800; padding: 3px 8px; }
+  .cip { border: 2px solid var(--garis); border-radius: 8px; background: var(--sorot); color: #111111; box-shadow: 2px 2px 0 var(--bayangan); font-size: 11.5px; font-weight: 800; padding: 3px 8px; }
   .panel.aktif .cip { animation: naik .45s ease both; animation-delay: calc(2.2s + var(--n) * .35s); }
   @keyframes naik { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .lembar { display: grid; gap: 10px; }
-  .isian { border: 2px solid var(--garis); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; background: var(--latar); }
+  .isian { border: 2px solid var(--garis); border-radius: 12px; box-shadow: 2px 2px 0 var(--bayangan); padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; background: var(--latar); color: var(--tinta); }
   .isian b { font-family: var(--judul); font-size: 15px; white-space: nowrap; }
   .isian small { display: block; color: var(--tinta2); font-size: 11.5px; line-height: 1.4; }
-  .isian.kosong { border-style: dashed; }
-  .isian.utama { background: var(--sorot); color: #111111; border-color: #111111; }
+  .isian.kosong { border-style: dashed; box-shadow: none; }
+  .isian.utama { background: var(--sorot); color: #111111; border-color: var(--garis); }
   .isian.utama small { color: #333333; }
-  .setuju { background: var(--merek); color: #111111; border: 2px solid #111111; border-radius: 12px; padding: 11px; text-align: center; font-weight: 800; font-size: 13px; }
+  .setuju { background: var(--merek); color: #111111; border: 2px solid var(--garis); border-radius: 12px; box-shadow: 2px 2px 0 var(--bayangan); padding: 11px; text-align: center; font-weight: 800; font-size: 13px; }
   .panel.aktif .lembar > * { animation: naik .45s ease both; animation-delay: calc(var(--n) * .25s); }
   .muka { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border: 2px solid #111111; border-radius: 50%; background: var(--biru); color: #111111; font-weight: 800; }
   .orang { display: flex; align-items: center; gap: 10px; text-align: left; }
   .bawah { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 12px; color: var(--tinta2); }
 
   /* ---------- pita bergerak ---------- */
-  .pita { margin-top: 24px; background: #DFFF00; color: #111111; border-block: 2.5px solid #111111; overflow: hidden; cursor: pointer; }
+  .pita { margin-top: 24px; background: #DFFF00; color: #111111; border-block: 2.5px solid var(--garis); overflow: hidden; cursor: pointer; }
   .rel { display: flex; width: max-content; animation: geser 34s linear infinite; }
   .rel ul { display: flex; margin: 0; padding: 0; list-style: none; }
   .rel li { display: flex; align-items: center; white-space: nowrap; padding: 13px 0; font: 700 15px var(--judul); }
   .rel li::after { content: ""; width: 8px; height: 8px; background: #111111; margin: 0 22px; rotate: 45deg; }
   @keyframes geser { to { transform: translateX(-50%); } }
   .pita:hover .rel, .jeda .rel { animation-play-state: paused; }
-  .jeda .panggung * , .jeda .panggung *::before { animation-play-state: paused !important; }
+  .jeda .panel.aktif, .jeda .cip, .jeda .lembar > * { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .jeda .baris::before { animation: none !important; opacity: .75 !important; transform: none !important; }
+  .jeda .laser { animation-play-state: paused !important; }
 
   /* ---------- bento ---------- */
   .bento { display: grid; gap: 18px; grid-template-columns: 1fr; }
   .bento h3 { font-size: 20px; margin: 16px 0 8px; }
   .bento p { color: var(--tinta2); font-size: 15px; }
-  .ikon { width: 52px; height: 52px; display: grid; place-items: center; border: 2px solid #111111; border-radius: 12px; background: var(--merek); color: #111111; box-shadow: 3px 3px 0 var(--bayang); }
+  .ikon { width: 52px; height: 52px; display: grid; place-items: center; border: 2px solid var(--garis); border-radius: 12px; background: var(--merek); color: #111111; box-shadow: 3px 3px 0 var(--bayangan); }
   .ikon.b { background: var(--biru); } .ikon.s { background: var(--sorot); }
   .ikon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: square; stroke-linejoin: miter; }
   @media (min-width: 640px) { .bento { grid-template-columns: repeat(2, 1fr); } }
@@ -197,7 +210,7 @@
   .langkah { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; }
   .langkah li { position: relative; }
   .langkah li:not(:last-child)::after { content: ""; position: absolute; left: 38px; bottom: -29px; height: 29px; border-left: 3px dashed var(--tinta); }
-  .nomor { font: 700 30px var(--judul); display: inline-block; background: var(--merek); color: #111111; border: 2px solid #111111; border-radius: 10px; padding: 0 10px; }
+  .nomor { font: 700 30px var(--judul); display: inline-block; background: var(--merek); color: #111111; border: 2px solid var(--garis); border-radius: 10px; box-shadow: 2px 2px 0 var(--bayangan); padding: 0 10px; }
   .langkah h3 { font-size: 19px; margin: 14px 0 6px; }
   .langkah p { color: var(--tinta2); font-size: 15px; }
   @media (min-width: 640px) {
@@ -214,7 +227,7 @@
   .alur li { position: relative; text-align: center; font-weight: 800; padding: 18px 14px; }
   .alur li small { display: block; font-weight: 600; color: var(--tinta2); font-size: 13px; margin-top: 4px; }
   .alur li:not(:last-child)::after { content: ""; position: absolute; left: calc(50% - 7px); bottom: -24px; border: 7px solid transparent; border-top: 10px solid var(--tinta); }
-  .alur li.inti { background: var(--sorot); color: #111111; border-color: #111111; }
+  .alur li.inti { background: var(--sorot); color: #111111; border-color: var(--garis); }
   .alur li.inti small { color: #333333; }
   @media (min-width: 840px) {
     .alur { grid-template-columns: 1fr 1fr 1.35fr 1fr; gap: 30px; align-items: stretch; }
@@ -231,8 +244,8 @@
   @media (min-width: 900px) { .dua { grid-template-columns: 1fr 1fr; } }
   .pasang { margin: 0 0 20px; padding: 0; list-style: none; counter-reset: p; display: grid; gap: 16px; }
   .pasang li { counter-increment: p; display: grid; grid-template-columns: 36px 1fr; gap: 12px; }
-  .pasang li::before { content: counter(p); width: 36px; height: 36px; display: grid; place-items: center; background: var(--biru); color: #111111; border: 2px solid #111111; border-radius: 10px; font-weight: 800; }
-  details { background: var(--kartu); border: 2px solid var(--garis); border-radius: 12px; box-shadow: 3px 3px 0 var(--bayang); margin-bottom: 14px; }
+  .pasang li::before { content: counter(p); width: 36px; height: 36px; display: grid; place-items: center; background: var(--biru); color: #111111; border: 2px solid var(--garis); border-radius: 10px; box-shadow: 2px 2px 0 var(--bayangan); font-weight: 800; }
+  details { background: var(--kartu); border: 2px solid var(--garis); border-radius: 12px; box-shadow: 3px 3px 0 var(--bayangan); margin-bottom: 14px; }
   summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; font-weight: 800; }
   summary::-webkit-details-marker { display: none; }
   summary::after { content: "+"; font: 700 22px/1 var(--judul); transition: transform .2s ease; }
@@ -241,12 +254,14 @@
   details[open] > div { animation: naik .3s ease; }
   details .tombol { margin-top: 12px; }
 
-  .ajakan { margin-top: 56px; background: #DFFF00; color: #111111; border-color: #111111; text-align: center; padding: 36px 20px; }
+  .ajakan { margin-top: 56px; background: #DFFF00; color: #111111; border-color: var(--garis); text-align: center; padding: 36px 20px; }
   .ajakan h2 { font-size: clamp(26px, 5vw, 36px); margin-bottom: 18px; }
   .ajakan .tombol { background: #FFFDF6; }
   footer { margin-top: 56px; border-top: 2px solid var(--garis); padding: 24px 0 40px; color: var(--tinta2); font-size: 13px; }
+  .kaki-isi { display: flex; align-items: center; gap: 12px; }
+  .logo-kaki { width: 28px; height: 28px; display: block; flex-shrink: 0; object-fit: contain; }
 
-  dialog { width: calc(100% - 32px); max-width: 420px; padding: 24px; border: 2.5px solid var(--garis); border-radius: 16px; box-shadow: 6px 6px 0 var(--bayang); background: var(--kartu); color: var(--tinta); }
+  dialog { width: calc(100% - 32px); max-width: 420px; padding: 24px; border: 2.5px solid var(--garis); border-radius: 16px; box-shadow: 6px 6px 0 var(--bayangan); background: var(--kartu); color: var(--tinta); }
   dialog::backdrop { background: rgba(0, 0, 0, .6); }
   dialog[open] { animation: naik .25s ease; }
   dialog h3 { font-size: 21px; margin-bottom: 10px; }
@@ -273,7 +288,7 @@
 <header class="nav">
   <div class="wadah">
     <a class="merek" href="#atas">
-      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="4" y="4" width="29" height="29" rx="7" fill="#111111"/><rect x="1.25" y="1.25" width="28.5" height="28.5" rx="7" fill="#DFFF00" stroke="#111111" stroke-width="2.5"/><path d="M20.5 10.5C19 9 13 8.3 11.5 11.4c-1.7 3.8 8 3.9 8.4 7.9.4 3.9-6.4 4.6-9.4 2.1" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="square"/></svg>
+      <img class="logo-utama" src="./assets/images/logo.svg" width="34" height="34" alt="" aria-hidden="true">
       <span class="nama">Summa</span> <span class="versi"><span data-l="id">v1.0 Uji Coba</span><span data-l="en">v1.0 Test Build</span></span>
     </a>
     <nav class="tautan" aria-label="Navigation">
@@ -348,7 +363,7 @@
               <span class="cip" style="--n:1">Total RM 61,20</span>
             </div>
           </div>
-          <div class="panel" role="tabpanel" id="p1" aria-labelledby="t1">
+          <div class="panel" role="tabpanel" id="p1" aria-labelledby="t1" hidden>
             <div class="lembar">
               <div class="isian utama" style="--n:0"><span>Total<small><span data-l="id">Cocok dengan jumlah barang</span><span data-l="en">Matches the item sum</span></small></span><b>RM 61,20</b></div>
               <div class="isian" style="--n:1"><span>Tunai / Cash<small><span data-l="id">Periksa sebelum disimpan</span><span data-l="en">Check before saving</span></small></span><b>RM 61,20</b></div>
@@ -356,7 +371,7 @@
               <div class="setuju" style="--n:3"><span data-l="id">Saya sudah memeriksa totalnya</span><span data-l="en">I have checked the total</span></div>
             </div>
           </div>
-          <div class="panel" role="tabpanel" id="p2" aria-labelledby="t2">
+          <div class="panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
             <div class="lembar">
               <div class="isian utama" style="--n:0"><span class="orang"><span class="muka">A</span><span>Aina<small><span data-l="id">Menalangi. Minyak, Roti</span><span data-l="en">Paid upfront. Oil, Bread</span></small></span></span><b>RM 15,80</b></div>
               <div class="isian" style="--n:1"><span class="orang"><span class="muka">B</span><span>Bima<small><span data-l="id">Telur</span><span data-l="en">Eggs</span></small></span></span><b>RM 16,50</b></div>
@@ -502,7 +517,8 @@
 </main>
 
 <footer>
-  <div class="wadah">
+  <div class="wadah kaki-isi">
+    <img class="logo-kaki" src="./assets/images/logo.svg" width="28" height="28" alt="" aria-hidden="true">
     <p><span data-l="id">Summa: artefak skripsi D4 Teknik Informatika, Politeknik Negeri Jakarta (PNJ) dan Management and Science University (MSU). Versi uji coba penelitian.</span><span data-l="en">Summa: a D4 Informatics Engineering thesis artefact, Politeknik Negeri Jakarta (PNJ) and Management and Science University (MSU). Research test build.</span></p>
   </div>
 </footer>
@@ -570,8 +586,16 @@
   var peraga = document.querySelector('.peraga'), tombolJeda = document.getElementById('jeda'), dijeda = false;
   function pilih(n) {
     aktif = (n + tab.length) % tab.length;
-    tab.forEach(function (t, i) { t.setAttribute('aria-selected', String(i === aktif)); t.tabIndex = i === aktif ? 0 : -1; });
-    panel.forEach(function (p, i) { p.classList.toggle('aktif', i === aktif); });
+    tab.forEach(function (t, i) {
+      var ya = i === aktif;
+      t.setAttribute('aria-selected', String(ya));
+      t.tabIndex = ya ? 0 : -1;
+    });
+    panel.forEach(function (p, i) {
+      var ya = i === aktif;
+      p.classList.toggle('aktif', ya);
+      p.hidden = !ya;
+    });
   }
   function berhenti() { clearInterval(putar); putar = null; }
   tab.forEach(function (t, i) {
