@@ -5,7 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Summa: pindai struk, patungan beres</title>
 <meta name="description" content="Aplikasi catatan keuangan pribadi dan bersama untuk anak kos, dengan pemindai struk. Versi uji coba penelitian untuk Android.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23DFFF00'/%3E%3Ctext x='16' y='23' font-family='system-ui' font-size='20' font-weight='700' text-anchor='middle' fill='%23111'%3ES%3C/text%3E%3C/svg%3E">
+<!-- Pratinjau tautan (WhatsApp, Telegram). Ganti og:url bila domain sendiri sudah aktif. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Summa">
+<meta property="og:title" content="Summa: pindai struk, patungan beres">
+<meta property="og:description" content="Aplikasi catatan keuangan pribadi dan bersama untuk anak kos, dengan pemindai struk. Versi uji coba penelitian untuk Android.">
+<meta property="og:url" content="https://summa-web-pearl.vercel.app/">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary">
+<link rel="icon"href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23DFFF00'/%3E%3Ctext x='16' y='23' font-family='system-ui' font-size='20' font-weight='700' text-anchor='middle' fill='%23111'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap">
@@ -103,6 +112,8 @@
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tema .bulan { display: none; } :root:not([data-theme="light"]) .tema .surya { display: block; } }
   .panjang { display: none; }
   @media (max-width: 419px) { .versi { display: none; } }
+  /* Di layar sangat sempit cukup logonya, supaya kendali tidak turun baris. Nama tetap terbaca pembaca layar. */
+  @media (max-width: 359px) { .merek .nama { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
   @media (min-width: 960px) {
     .tautan { order: 0; width: auto; margin-left: 24px; gap: 22px; padding: 0; }
     .tautan a { font-size: 14px; }
@@ -263,7 +274,7 @@
   <div class="wadah">
     <a class="merek" href="#atas">
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="4" y="4" width="29" height="29" rx="7" fill="#111111"/><rect x="1.25" y="1.25" width="28.5" height="28.5" rx="7" fill="#DFFF00" stroke="#111111" stroke-width="2.5"/><path d="M20.5 10.5C19 9 13 8.3 11.5 11.4c-1.7 3.8 8 3.9 8.4 7.9.4 3.9-6.4 4.6-9.4 2.1" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="square"/></svg>
-      Summa <span class="versi"><span data-l="id">v1.0 Uji Coba</span><span data-l="en">v1.0 Test Build</span></span>
+      <span class="nama">Summa</span> <span class="versi"><span data-l="id">v1.0 Uji Coba</span><span data-l="en">v1.0 Test Build</span></span>
     </a>
     <nav class="tautan" aria-label="Navigasi">
       <a href="#fitur"><span data-l="id">Fitur</span><span data-l="en">Features</span></a>
