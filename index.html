@@ -3,189 +3,610 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Summa</title>
-<meta name="description" content="Aplikasi catatan keuangan pribadi dan bersama untuk anak kos, dengan pemindai struk.">
+<title>Summa: pindai struk, patungan beres</title>
+<meta name="description" content="Aplikasi catatan keuangan pribadi dan bersama untuk anak kos, dengan pemindai struk. Versi uji coba penelitian untuk Android.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23DFFF00'/%3E%3Ctext x='16' y='23' font-family='system-ui' font-size='20' font-weight='700' text-anchor='middle' fill='%23111'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap">
+<script>
+  /* Dijalankan sebelum halaman digambar, supaya tema dan bahasa tidak berkedip. */
+  (function (d) {
+    d.classList.add('js');
+    try {
+      var t = localStorage.getItem('summa_tema'), l = localStorage.getItem('summa_bahasa');
+      if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t);
+      if (l === 'id' || l === 'en') d.lang = l;
+    } catch (e) {}
+  })(document.documentElement);
+</script>
 <style>
-  /* Warna diambil dari src/constants/theme.ts. #C6F432 sengaja TIDAK dipakai:
-     di aplikasi warna itu berarti tepat satu hal, yaitu lunas. */
+  /* Warna diambil dari src/constants/theme.ts. Hijau "lunas" milik aplikasi
+     sengaja tidak dipakai di halaman ini. */
   :root {
-    --latar: #F4F0E4;
-    --kartu: #FFFDF6;
-    --tinta: #111111;
-    --tinta2: #565656;
-    --garis: #111111;
-    --merek: #DFFF00;
-    --merek-tinta: #111111;
-    --redup: #EFECE2;
+    color-scheme: light;
+    --latar: #F4F0E4; --kartu: #FFFDF6; --tinta: #111111; --tinta2: #565656;
+    --garis: #111111; --merek: #DFFF00; --biru: #73D7FF; --sorot: #FFE566;
+    --redup: #EFECE2; --bayang: #111111;
+    --judul: "Space Grotesk", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --isi: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --latar: #121418;
-      --kartu: #1B1E26;
-      --tinta: #F4F4F5;
-      --tinta2: #9CA3AF;
-      --garis: #353B48;
-      --merek: #D4F000;
-      --merek-tinta: #111111;
-      --redup: #14171D;
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --latar: #121418; --kartu: #1B1E26; --tinta: #F4F4F5; --tinta2: #9CA3AF;
+      --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayang: #000000;
     }
   }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --latar: #121418; --kartu: #1B1E26; --tinta: #F4F4F5; --tinta2: #9CA3AF;
+    --garis: #353B48; --merek: #D4F000; --redup: #14171D; --bayang: #000000;
+  }
+
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    padding: 0 16px 56px;
-    background: var(--latar);
-    color: var(--tinta);
-    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    -webkit-text-size-adjust: 100%;
-  }
-  .wadah { max-width: 560px; margin: 0 auto; }
-  header { padding: 48px 0 32px; }
-  .lencana {
-    display: inline-block;
-    background: var(--merek);
-    color: var(--merek-tinta);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    padding: 5px 11px;
-    border: 2px solid var(--garis);
-    border-radius: 999px;
-  }
-  h1 { font-size: 40px; line-height: 1.1; margin: 20px 0 10px; letter-spacing: -.02em; }
-  .sub { color: var(--tinta2); margin: 0; font-size: 17px; }
-  .tombol {
-    display: block;
-    width: 100%;
-    margin: 12px 0 0;
-    padding: 17px 20px;
-    font: inherit;
-    font-weight: 700;
-    font-size: 17px;
-    text-align: center;
-    text-decoration: none;
-    border: 2px solid var(--garis);
-    border-radius: 14px;
-    cursor: pointer;
-    background: var(--merek);
-    color: var(--merek-tinta);
-  }
-  .tombol.sunyi { background: var(--kartu); color: var(--tinta); }
-  .tombol:focus-visible { outline: 3px solid var(--tinta); outline-offset: 3px; }
-  .catatan { color: var(--tinta2); font-size: 14px; margin: 10px 0 0; }
-  h2 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--tinta2); margin: 40px 0 12px; }
-  ol { margin: 0; padding: 0 0 0 22px; }
-  ol li { margin-bottom: 10px; }
-  .kartu {
-    background: var(--kartu);
-    border: 2px solid var(--garis);
-    border-radius: 14px;
-    padding: 16px 18px;
-    margin-top: 16px;
-  }
-  .kartu p { margin: 0; font-size: 14px; color: var(--tinta2); }
-  .kartu p + p { margin-top: 10px; }
-  dialog {
-    width: calc(100% - 32px);
-    max-width: 420px;
-    padding: 24px;
-    border: 2px solid var(--garis);
-    border-radius: 16px;
-    background: var(--kartu);
-    color: var(--tinta);
-  }
-  dialog::backdrop { background: rgba(0, 0, 0, .55); }
-  dialog h3 { margin: 0 0 10px; font-size: 21px; }
-  dialog p { margin: 0 0 12px; font-size: 15px; color: var(--tinta2); }
-  footer { margin-top: 48px; padding-top: 20px; border-top: 2px solid var(--garis); color: var(--tinta2); font-size: 13px; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  html[lang="id"] [data-l="en"], html[lang="en"] [data-l="id"] { display: none !important; }
+  body { margin: 0; background: var(--latar); color: var(--tinta); font: 16px/1.6 var(--isi); overflow-x: hidden; }
+  h1, h2, h3 { font-family: var(--judul); line-height: 1.12; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
   a { color: inherit; }
+  svg { display: block; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--tinta); outline-offset: 3px; }
+  .wadah { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 64px 0 8px; scroll-margin-top: 104px; }
+  .judul-bagian { font-size: clamp(28px, 5vw, 40px); margin-bottom: 10px; }
+  .pengantar { color: var(--tinta2); max-width: 62ch; margin-bottom: 28px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  /* ---------- tombol dan kartu Neo-Brutalis ---------- */
+  .tombol {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 48px; padding: 12px 20px; font-weight: 800; text-decoration: none; cursor: pointer;
+    background: var(--merek); color: #111111; border: 2.5px solid #111111; border-radius: 12px;
+    box-shadow: 4px 4px 0 var(--bayang); transition: transform .15s ease;
+  }
+  .tombol.sunyi { background: var(--kartu); color: var(--tinta); border-color: var(--garis); }
+  .tombol.kecil { min-height: 40px; padding: 6px 12px; font-size: 14px; box-shadow: 3px 3px 0 var(--bayang); border-radius: 10px; border-width: 2px; }
+  .tombol:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--bayang); }
+  .tombol:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--bayang); }
+  .kartu { background: var(--kartu); border: 2px solid var(--garis); border-radius: 16px; box-shadow: 4px 4px 0 var(--bayang); padding: 22px; }
+  .angkat { transition: transform .18s ease; }
+  .angkat:hover { transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--bayang); }
+  .pil { display: inline-block; background: var(--merek); color: #111111; border: 2px solid #111111; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* ---------- gulir muncul ---------- */
+  .js .muncul { opacity: 0; translate: 0 22px; }
+  .js .muncul.tampak {
+    opacity: 1; translate: 0 0;
+    transition: opacity .6s ease, translate .6s cubic-bezier(.2, .8, .2, 1), transform .18s ease;
+    transition-delay: calc(var(--i, 0) * 80ms), calc(var(--i, 0) * 80ms), 0s;
+  }
+
+  /* ---------- navbar ---------- */
+  .progres { position: fixed; inset: 0 0 auto 0; height: 4px; background: #DFFF00; transform: scaleX(0); transform-origin: left; z-index: 30; }
+  .nav { position: sticky; top: 0; z-index: 20; background: var(--latar); border-bottom: 2px solid var(--garis); padding-top: 4px; }
+  .nav .wadah { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; }
+  .merek { display: flex; align-items: center; gap: 8px; min-height: 56px; font: 700 20px var(--judul); text-decoration: none; }
+  .versi { font: 800 10px var(--isi); letter-spacing: .08em; text-transform: uppercase; border: 1.5px solid #111111; background: var(--sorot); color: #111111; border-radius: 6px; padding: 2px 6px; white-space: nowrap; }
+  .tautan { order: 5; width: 100%; display: flex; justify-content: space-between; gap: 4px; overflow-x: auto; padding-bottom: 6px; }
+  .tautan a { font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; padding: 6px 2px; border-bottom: 2.5px solid transparent; }
+  .tautan a:hover { border-bottom-color: var(--tinta); }
+  .kendali { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .bahasa { display: flex; border: 2px solid var(--garis); border-radius: 10px; overflow: hidden; background: var(--kartu); }
+  .bahasa button { border: 0; background: none; padding: 0 9px; height: 36px; font-size: 12px; font-weight: 800; cursor: pointer; }
+  .bahasa button[aria-pressed="true"] { background: var(--merek); color: #111111; }
+  .tema { width: 40px; height: 40px; display: grid; place-items: center; border: 2px solid var(--garis); border-radius: 10px; background: var(--kartu); cursor: pointer; }
+  .tema .bulan { display: block; } .tema .surya { display: none; }
+  :root[data-theme="dark"] .tema .bulan { display: none; } :root[data-theme="dark"] .tema .surya { display: block; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tema .bulan { display: none; } :root:not([data-theme="light"]) .tema .surya { display: block; } }
+  .panjang { display: none; }
+  @media (max-width: 419px) { .versi { display: none; } }
+  @media (min-width: 960px) {
+    .tautan { order: 0; width: auto; margin-left: 24px; gap: 22px; padding: 0; }
+    .tautan a { font-size: 14px; }
+    .panjang { display: inline; }
+    section { scroll-margin-top: 72px; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero { display: grid; gap: 48px; padding-top: 40px; padding-bottom: 40px; align-items: center; }
+  .hero > * { min-width: 0; }
+  .hero h1 { font-size: clamp(38px, 8vw, 66px); margin: 18px 0 16px; }
+  .hero h1 mark { background: #DFFF00; color: #111111; padding: 0 .12em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .hero .sub { color: var(--tinta2); font-size: 18px; max-width: 54ch; }
+  .aksi { display: flex; flex-direction: column; gap: 14px; margin: 28px 0 14px; }
+  .keterangan { font-size: 14px; color: var(--tinta2); }
+  @media (min-width: 560px) { .aksi { flex-direction: row; flex-wrap: wrap; } }
+  @media (min-width: 960px) { .hero { grid-template-columns: 1.15fr .85fr; padding-top: 64px; } }
+
+  /* ---------- mockup ponsel ---------- */
+  .peraga { justify-self: center; width: 100%; max-width: 336px; }
+  .ponsel { background: var(--kartu); border: 3px solid #111111; border-radius: 40px; box-shadow: 10px 10px 0 var(--bayang); padding: 14px; }
+  .lensa { width: 90px; height: 8px; border-radius: 99px; background: #111111; margin: 0 auto 12px; }
+  .tab { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+  .tab button { border: 2px solid var(--garis); background: var(--redup); border-radius: 10px; min-height: 40px; font-size: 13px; font-weight: 800; cursor: pointer; transition: transform .15s ease; }
+  .tab button:active { transform: scale(.96); }
+  .tab button[aria-selected="true"] { background: var(--merek); color: #111111; border-color: #111111; }
+  .panggung { display: grid; }
+  .panel { grid-area: 1 / 1; min-width: 0; opacity: 0; visibility: hidden; translate: 14px 0; transition: opacity .35s ease, translate .35s ease, visibility 0s .35s; }
+  .panel.aktif { opacity: 1; visibility: visible; translate: 0 0; transition: opacity .35s ease, translate .35s ease; }
+  .struk { position: relative; overflow: hidden; background: #FFFFFF; color: #111111; border: 2px solid #111111; border-radius: 12px; padding: 14px 12px; font: 600 12.5px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; }
+  .struk .toko { text-align: center; font-weight: 800; border-bottom: 2px dashed #111111; padding-bottom: 8px; margin-bottom: 6px; }
+  .baris { position: relative; display: flex; justify-content: space-between; gap: 8px; padding: 5px 6px; }
+  .baris > span { position: relative; }
+  .baris::before { content: ""; position: absolute; inset: 1px 0; border: 1.5px solid #111111; border-radius: 6px; background: #73D7FF; opacity: 0; }
+  .baris.jumlah { margin-top: 6px; font-weight: 800; font-size: 14px; }
+  .baris.jumlah::before { background: #DFFF00; }
+  .panel.aktif .baris::before { animation: nyala .45s ease forwards; animation-delay: calc(.9s + var(--n) * .55s); }
+  @keyframes nyala { from { opacity: 0; transform: scale(.92); } to { opacity: .75; transform: none; } }
+  .laser { position: absolute; inset: 0; pointer-events: none; }
+  .laser::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: #111111; box-shadow: 0 0 0 3px rgba(223, 255, 0, .9), 0 8px 18px 6px rgba(223, 255, 0, .55); }
+  .panel.aktif .laser { animation: sapu 2.4s ease-in-out infinite alternate; }
+  @keyframes sapu { from { transform: translateY(2%); } to { transform: translateY(96%); } }
+  .hasil { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .cip { border: 2px solid #111111; border-radius: 8px; background: var(--sorot); color: #111111; font-size: 11.5px; font-weight: 800; padding: 3px 8px; }
+  .panel.aktif .cip { animation: naik .45s ease both; animation-delay: calc(2.2s + var(--n) * .35s); }
+  @keyframes naik { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .lembar { display: grid; gap: 10px; }
+  .isian { border: 2px solid var(--garis); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; background: var(--latar); }
+  .isian b { font-family: var(--judul); font-size: 15px; white-space: nowrap; }
+  .isian small { display: block; color: var(--tinta2); font-size: 11.5px; line-height: 1.4; }
+  .isian.kosong { border-style: dashed; }
+  .isian.utama { background: var(--sorot); color: #111111; border-color: #111111; }
+  .isian.utama small { color: #333333; }
+  .setuju { background: var(--merek); color: #111111; border: 2px solid #111111; border-radius: 12px; padding: 11px; text-align: center; font-weight: 800; font-size: 13px; }
+  .panel.aktif .lembar > * { animation: naik .45s ease both; animation-delay: calc(var(--n) * .25s); }
+  .muka { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border: 2px solid #111111; border-radius: 50%; background: var(--biru); color: #111111; font-weight: 800; }
+  .orang { display: flex; align-items: center; gap: 10px; text-align: left; }
+  .bawah { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 12px; color: var(--tinta2); }
+
+  /* ---------- pita bergerak ---------- */
+  .pita { margin-top: 24px; background: #DFFF00; color: #111111; border-block: 2.5px solid #111111; overflow: hidden; cursor: pointer; }
+  .rel { display: flex; width: max-content; animation: geser 34s linear infinite; }
+  .rel ul { display: flex; margin: 0; padding: 0; list-style: none; }
+  .rel li { display: flex; align-items: center; white-space: nowrap; padding: 13px 0; font: 700 15px var(--judul); }
+  .rel li::after { content: ""; width: 8px; height: 8px; background: #111111; margin: 0 22px; rotate: 45deg; }
+  @keyframes geser { to { transform: translateX(-50%); } }
+  .pita:hover .rel, .jeda .rel { animation-play-state: paused; }
+  .jeda .panggung * , .jeda .panggung *::before { animation-play-state: paused !important; }
+
+  /* ---------- bento ---------- */
+  .bento { display: grid; gap: 18px; grid-template-columns: 1fr; }
+  .bento h3 { font-size: 20px; margin: 16px 0 8px; }
+  .bento p { color: var(--tinta2); font-size: 15px; }
+  .ikon { width: 52px; height: 52px; display: grid; place-items: center; border: 2px solid #111111; border-radius: 12px; background: var(--merek); color: #111111; box-shadow: 3px 3px 0 var(--bayang); }
+  .ikon.b { background: var(--biru); } .ikon.s { background: var(--sorot); }
+  .ikon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: square; stroke-linejoin: miter; }
+  @media (min-width: 640px) { .bento { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 960px) { .bento { grid-template-columns: repeat(6, 1fr); } .bento > * { grid-column: span 2; } .bento > .lebar { grid-column: span 3; } }
+
+  /* ---------- langkah ---------- */
+  .langkah { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; }
+  .langkah li { position: relative; }
+  .langkah li:not(:last-child)::after { content: ""; position: absolute; left: 38px; bottom: -29px; height: 29px; border-left: 3px dashed var(--tinta); }
+  .nomor { font: 700 30px var(--judul); display: inline-block; background: var(--merek); color: #111111; border: 2px solid #111111; border-radius: 10px; padding: 0 10px; }
+  .langkah h3 { font-size: 19px; margin: 14px 0 6px; }
+  .langkah p { color: var(--tinta2); font-size: 15px; }
+  @media (min-width: 640px) {
+    .langkah { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .langkah li:not(:last-child)::after { display: none; }
+  }
+  @media (min-width: 960px) {
+    .langkah { grid-template-columns: repeat(4, 1fr); }
+    .langkah li:not(:last-child)::after { display: block; left: auto; right: -26px; top: 46px; bottom: auto; width: 24px; height: 0; border-left: 0; border-top: 3px dashed var(--tinta); }
+  }
+
+  /* ---------- alur arsitektur ---------- */
+  .alur { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 34px; }
+  .alur li { position: relative; text-align: center; font-weight: 800; padding: 18px 14px; }
+  .alur li small { display: block; font-weight: 600; color: var(--tinta2); font-size: 13px; margin-top: 4px; }
+  .alur li:not(:last-child)::after { content: ""; position: absolute; left: calc(50% - 7px); bottom: -24px; border: 7px solid transparent; border-top: 10px solid var(--tinta); }
+  .alur li.inti { background: var(--sorot); color: #111111; border-color: #111111; }
+  .alur li.inti small { color: #333333; }
+  @media (min-width: 840px) {
+    .alur { grid-template-columns: 1fr 1fr 1.35fr 1fr; gap: 30px; align-items: stretch; }
+    .alur li:not(:last-child)::after { left: auto; right: -24px; bottom: auto; top: calc(50% - 7px); border: 7px solid transparent; border-left: 10px solid var(--tinta); }
+  }
+  .privasi { display: grid; gap: 18px; }
+  .privasi h3 { font-size: 19px; margin-bottom: 8px; }
+  .privasi p { color: var(--tinta2); font-size: 15px; }
+  @media (min-width: 840px) { .privasi { grid-template-columns: repeat(3, 1fr); } }
+
+  /* ---------- pasang dan tanya jawab ---------- */
+  .dua { display: grid; gap: 28px; align-items: start; }
+  .dua > * { min-width: 0; }
+  @media (min-width: 900px) { .dua { grid-template-columns: 1fr 1fr; } }
+  .pasang { margin: 0 0 20px; padding: 0; list-style: none; counter-reset: p; display: grid; gap: 16px; }
+  .pasang li { counter-increment: p; display: grid; grid-template-columns: 36px 1fr; gap: 12px; }
+  .pasang li::before { content: counter(p); width: 36px; height: 36px; display: grid; place-items: center; background: var(--biru); color: #111111; border: 2px solid #111111; border-radius: 10px; font-weight: 800; }
+  details { background: var(--kartu); border: 2px solid var(--garis); border-radius: 12px; box-shadow: 3px 3px 0 var(--bayang); margin-bottom: 14px; }
+  summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; font-weight: 800; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font: 700 22px/1 var(--judul); transition: transform .2s ease; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details > div { padding: 0 16px 16px; color: var(--tinta2); font-size: 15px; }
+  details[open] > div { animation: naik .3s ease; }
+  details .tombol { margin-top: 12px; }
+
+  .ajakan { margin-top: 56px; background: #DFFF00; color: #111111; border-color: #111111; text-align: center; padding: 36px 20px; }
+  .ajakan h2 { font-size: clamp(26px, 5vw, 36px); margin-bottom: 18px; }
+  .ajakan .tombol { background: #FFFDF6; }
+  footer { margin-top: 56px; border-top: 2px solid var(--garis); padding: 24px 0 40px; color: var(--tinta2); font-size: 13px; }
+
+  dialog { width: calc(100% - 32px); max-width: 420px; padding: 24px; border: 2.5px solid var(--garis); border-radius: 16px; box-shadow: 6px 6px 0 var(--bayang); background: var(--kartu); color: var(--tinta); }
+  dialog::backdrop { background: rgba(0, 0, 0, .6); }
+  dialog[open] { animation: naik .25s ease; }
+  dialog h3 { font-size: 21px; margin-bottom: 10px; }
+  dialog p { margin-bottom: 12px; font-size: 15px; color: var(--tinta2); }
+  dialog .tombol { width: 100%; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .js .muncul { opacity: 1; translate: 0 0; }
+    .tombol:hover, .tombol:active, .angkat:hover { transform: none; }
+    .baris::before { opacity: .75; }
+    .laser, #jeda { display: none; }
+    .pita { cursor: auto; }
+    .rel { width: auto; }
+    .rel ul { flex-wrap: wrap; justify-content: center; padding: 0 16px; }
+    .rel ul[aria-hidden] { display: none; }
+  }
 </style>
 </head>
 <body>
-<div class="wadah">
+<div class="progres" aria-hidden="true"></div>
 
-  <header>
-    <span class="lencana">Uji coba</span>
-    <h1>Summa</h1>
-    <p class="sub">
-      Catat keuangan pribadi dan patungan satu kos di satu tempat. Struk belanja
-      dipindai, nominalnya terbaca sendiri, lalu dibagi ke penghuni.
-    </p>
-  </header>
+<header class="nav">
+  <div class="wadah">
+    <a class="merek" href="#atas">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="4" y="4" width="29" height="29" rx="7" fill="#111111"/><rect x="1.25" y="1.25" width="28.5" height="28.5" rx="7" fill="#DFFF00" stroke="#111111" stroke-width="2.5"/><path d="M20.5 10.5C19 9 13 8.3 11.5 11.4c-1.7 3.8 8 3.9 8.4 7.9.4 3.9-6.4 4.6-9.4 2.1" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="square"/></svg>
+      Summa <span class="versi"><span data-l="id">v1.0 Uji Coba</span><span data-l="en">v1.0 Test Build</span></span>
+    </a>
+    <nav class="tautan" aria-label="Navigasi">
+      <a href="#fitur"><span data-l="id">Fitur</span><span data-l="en">Features</span></a>
+      <a href="#cara"><span data-l="id">Cara Kerja</span><span data-l="en">How It Works</span></a>
+      <a href="#privasi"><span data-l="id">Privasi AI</span><span data-l="en">AI Privacy</span></a>
+      <a href="#pasang"><span data-l="id">Cara Pasang</span><span data-l="en">Install</span></a>
+    </nav>
+    <div class="kendali">
+      <div class="bahasa" role="group" aria-label="Bahasa / Language">
+        <button type="button" data-bahasa="id" aria-pressed="true">ID</button>
+        <button type="button" data-bahasa="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="tema" type="button" id="tema">
+        <span class="sr"><span data-l="id">Ganti tema terang atau gelap</span><span data-l="en">Switch light or dark theme</span></span>
+        <svg class="bulan" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+        <svg class="surya" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M19.8 4.2l-2.1 2.1M6.3 17.7l-2.1 2.1"/></svg>
+      </button>
+      <a class="tombol kecil" href="https://github.com/klissh/summa-web/releases/latest/download/Summa.apk" download>
+        <span><span class="panjang"><span data-l="id">Unduh </span><span data-l="en">Get </span></span>APK</span>
+      </a>
+    </div>
+  </div>
+</header>
 
-  <!-- Tautan ini hidup selama Release terbaru di repo publik klissh/summa-web
-       memuat berkas bernama persis Summa.apk. APK tidak disimpan di repo. -->
-  <a class="tombol" href="https://github.com/klissh/summa-web/releases/latest/download/Summa.apk" download>
-    Unduh untuk Android
-  </a>
-  <p class="catatan">Termasuk Huawei dengan EMUI atau HarmonyOS 2 sampai 4.</p>
+<main id="atas">
+  <div class="wadah hero">
+    <div>
+      <span class="pil muncul"><span data-l="id">Uji coba penelitian</span><span data-l="en">Research test build</span></span>
+      <h1 class="muncul" style="--i:1">
+        <span data-l="id">Struk difoto, <mark>patungan beres.</mark></span>
+        <span data-l="en">Snap the receipt, <mark>settle the split.</mark></span>
+      </h1>
+      <p class="sub muncul" style="--i:2">
+        <span data-l="id">Patungan belanja sering cuma dikirim ke grup obrolan, tertumpuk, lalu tidak ada yang tahu siapa sudah bayar. Summa memindai struknya, membagi per barang ke penghuni kos, dan mencatat keuangan pribadimu di tempat yang sama.</span>
+        <span data-l="en">Shared grocery bills get dropped into a group chat, buried, and nobody knows who has paid. Summa scans the receipt, splits it item by item among housemates, and keeps your personal finances in the same place.</span>
+      </p>
+      <div class="aksi muncul" style="--i:3">
+        <a class="tombol" href="https://github.com/klissh/summa-web/releases/latest/download/Summa.apk" download>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></svg>
+          <span data-l="id">Unduh untuk Android (.apk)</span><span data-l="en">Download for Android (.apk)</span>
+        </a>
+        <button class="tombol sunyi buka-ios" type="button"><span data-l="id">Saya pakai iPhone</span><span data-l="en">I use an iPhone</span></button>
+      </div>
+      <p class="keterangan muncul" style="--i:4">
+        <span data-l="id">Satu berkas APK untuk Android dan Huawei (EMUI atau HarmonyOS 2 sampai 4). Ukuran sekitar 133 MB.</span>
+        <span data-l="en">One APK for Android and Huawei (EMUI or HarmonyOS 2 to 4). About 133 MB.</span>
+      </p>
+    </div>
 
-  <button class="tombol sunyi" type="button" id="tombol-ios">
-    Saya pakai iPhone
-  </button>
-
-  <h2>Cara memasang di Android</h2>
-  <ol>
-    <li>Ketuk tombol unduh di atas, lalu tunggu berkasnya selesai.</li>
-    <li>Buka berkasnya. Kalau ponsel meminta izin, pilih
-        <strong>Izinkan dari sumber ini</strong>.</li>
-    <li>Ketuk <strong>Pasang</strong>, lalu buka Summa dan daftar dengan surel.</li>
-  </ol>
-
-  <div class="kartu">
-    <p>
-      Ponsel mungkin memperingatkan bahwa aplikasi ini bukan dari Play Store.
-      Itu wajar untuk aplikasi uji coba. Pilih <strong>Pasang saja</strong>.
-    </p>
-    <p>
-      Pada Huawei tanpa layanan Google, notifikasi pengingat tidak akan masuk.
-      Fitur lainnya tetap berjalan.
-    </p>
+    <div class="peraga muncul" style="--i:2">
+      <div class="ponsel">
+        <div class="lensa" aria-hidden="true"></div>
+        <div class="tab" role="tablist" aria-label="Demo Summa">
+          <button type="button" role="tab" id="t0" aria-controls="p0" aria-selected="true"><span data-l="id">Pindai</span><span data-l="en">Scan</span></button>
+          <button type="button" role="tab" id="t1" aria-controls="p1" aria-selected="false" tabindex="-1"><span data-l="id">Tinjau</span><span data-l="en">Review</span></button>
+          <button type="button" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1"><span data-l="id">Bagi</span><span data-l="en">Split</span></button>
+        </div>
+        <div class="panggung">
+          <div class="panel aktif" role="tabpanel" id="p0" aria-labelledby="t0">
+            <div class="struk">
+              <div class="toko">KEDAI CONTOH<br>27/11/2026</div>
+              <div class="baris" style="--n:0"><span>BERAS 5KG</span><span>28.90</span></div>
+              <div class="baris" style="--n:1"><span>TELUR 30 BIJI</span><span>16.50</span></div>
+              <div class="baris" style="--n:2"><span>MINYAK 2L</span><span>11.80</span></div>
+              <div class="baris" style="--n:3"><span>ROTI</span><span>4.00</span></div>
+              <div class="baris jumlah" style="--n:4"><span>TOTAL RM</span><span>61.20</span></div>
+              <div class="laser" aria-hidden="true"></div>
+            </div>
+            <div class="hasil">
+              <span class="cip" style="--n:0"><span data-l="id">Nama barang: 4 baris</span><span data-l="en">Item names: 4 lines</span></span>
+              <span class="cip" style="--n:1">Total RM 61,20</span>
+            </div>
+          </div>
+          <div class="panel" role="tabpanel" id="p1" aria-labelledby="t1">
+            <div class="lembar">
+              <div class="isian utama" style="--n:0"><span>Total<small><span data-l="id">Cocok dengan jumlah barang</span><span data-l="en">Matches the item sum</span></small></span><b>RM 61,20</b></div>
+              <div class="isian" style="--n:1"><span>Tunai / Cash<small><span data-l="id">Periksa sebelum disimpan</span><span data-l="en">Check before saving</span></small></span><b>RM 61,20</b></div>
+              <div class="isian kosong" style="--n:2"><span><span data-l="id">Pajak</span><span data-l="en">Tax</span><small><span data-l="id">Tidak terbaca, dibiarkan kosong. Isi sendiri bila ada.</span><span data-l="en">Not read, left empty. Fill it in if there is one.</span></small></span><b aria-label="kosong">...</b></div>
+              <div class="setuju" style="--n:3"><span data-l="id">Saya sudah memeriksa totalnya</span><span data-l="en">I have checked the total</span></div>
+            </div>
+          </div>
+          <div class="panel" role="tabpanel" id="p2" aria-labelledby="t2">
+            <div class="lembar">
+              <div class="isian utama" style="--n:0"><span class="orang"><span class="muka">A</span><span>Aina<small><span data-l="id">Menalangi. Minyak, Roti</span><span data-l="en">Paid upfront. Oil, Bread</span></small></span></span><b>RM 15,80</b></div>
+              <div class="isian" style="--n:1"><span class="orang"><span class="muka">B</span><span>Bima<small><span data-l="id">Telur</span><span data-l="en">Eggs</span></small></span></span><b>RM 16,50</b></div>
+              <div class="isian" style="--n:2"><span class="orang"><span class="muka">D</span><span>Dani<small><span data-l="id">Beras</span><span data-l="en">Rice</span></small></span></span><b>RM 28,90</b></div>
+              <div class="setuju" style="--n:3"><span data-l="id">Utang ke Aina: Bima RM 16,50, Dani RM 28,90</span><span data-l="en">Owed to Aina: Bima RM 16,50, Dani RM 28,90</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bawah">
+        <span><span data-l="id">Ilustrasi dengan data contoh</span><span data-l="en">Illustration with sample data</span></span>
+        <button class="tombol sunyi kecil" type="button" id="jeda" aria-pressed="false"><span data-l="id">Jeda animasi</span><span data-l="en">Pause motion</span></button>
+      </div>
+    </div>
   </div>
 
-  <h2>Privasi pemindaian struk</h2>
-  <div class="kartu">
-    <p>
-      Pada versi uji ini, struk dibaca oleh model yang berjalan di peladen milik
-      Summa sendiri (dihosting di Railway, permintaan diteruskan lewat Supabase).
-      Penambal VLM nonaktif secara bawaan, sehingga foto struk tidak dikirim ke
-      layanan AI pihak ketiga. Foto yang disimpan bersama transaksi berada di
-      penyimpanan Supabase.
-    </p>
+  <div class="pita">
+    <div class="rel">
+      <ul>
+        <li><span data-l="id">OCR + LayoutLMv3 di peladen sendiri</span><span data-l="en">OCR + LayoutLMv3 on our own server</span></li>
+        <li><span data-l="id">Bagi tagihan per barang</span><span data-l="en">Item-by-item bill split</span></li>
+        <li><span data-l="id">Tinjauan oleh manusia</span><span data-l="en">Human-in-the-loop review</span></li>
+        <li><span data-l="id">Bukti pelunasan 2 langkah</span><span data-l="en">Two-step proof of payment</span></li>
+        <li>MYR / IDR</li>
+        <li><span data-l="id">Anggaran dan target tabungan</span><span data-l="en">Budgets and savings goals</span></li>
+        <li><span data-l="id">3 bahasa: ID, EN, MS</span><span data-l="en">3 languages: ID, EN, MS</span></li>
+        <li><span data-l="id">Tanpa AI pihak ketiga</span><span data-l="en">No third-party AI</span></li>
+      </ul>
+    </div>
   </div>
 
-  <footer>
-    Summa dibuat sebagai artefak skripsi D4 Teknik Informatika, Politeknik
-    Negeri Jakarta. Aplikasi ini masih dalam tahap uji coba.
-  </footer>
+  <section id="fitur">
+    <div class="wadah">
+      <h2 class="judul-bagian muncul"><span data-l="id">Fitur utama</span><span data-l="en">Key features</span></h2>
+      <p class="pengantar muncul"><span data-l="id">Dibuat untuk anak kos yang tinggal bareng dan merantau.</span><span data-l="en">Built for students and migrants who share a house.</span></p>
+      <div class="bento">
+        <article class="kartu angkat muncul lebar">
+          <div class="ikon"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 9V3h6M19 3h6v6M25 19v6h-6M9 25H3v-6M8 10h12M8 14h12M8 18h7"/></svg></div>
+          <h3><span data-l="id">Pemindai struk hibrida</span><span data-l="en">Hybrid receipt scanner</span></h3>
+          <p><span data-l="id">Barang dan nominal diambil dari foto struk termal memakai detektor teks, model tata letak dokumen, dan lapisan aturan sebagai penengah.</span><span data-l="en">Items and amounts are read from thermal receipt photos using a text detector, a document layout model and a rule layer that arbitrates.</span></p>
+        </article>
+        <article class="kartu angkat muncul lebar" style="--i:1">
+          <div class="ikon s"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 3l10 4v7c0 6-4 9-10 11C8 23 4 20 4 14V7zM9 14l4 4 6-7"/></svg></div>
+          <h3><span data-l="id">Verifikasi yang jujur</span><span data-l="en">Honest verification</span></h3>
+          <p><span data-l="id">Angka yang tidak ditemukan atau tidak masuk akal dibiarkan kosong atau ditandai. Hasil baca tetap bisa keliru, karena itu kamu mengonfirmasi total sebelum disimpan.</span><span data-l="en">Amounts that are missing or implausible are left empty or flagged. Readings can still be wrong, so you confirm the total before saving.</span></p>
+        </article>
+        <article class="kartu angkat muncul">
+          <div class="ikon b"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M5 4h18v20H5zM5 11h18M14 11v13M9 15h1M9 19h1M18 15h1M18 19h1"/></svg></div>
+          <h3><span data-l="id">Bagi tagihan per barang</span><span data-l="en">Split item by item</span></h3>
+          <p><span data-l="id">Tetapkan tiap baris belanja ke anggota grup. Utang bersih dihitung otomatis, tanpa kalkulator.</span><span data-l="en">Assign each line to group members. Net debts are calculated for you, no calculator needed.</span></p>
+        </article>
+        <article class="kartu angkat muncul" style="--i:1">
+          <div class="ikon"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4 22V6h20v16zM8 17l4-5 4 4 3-3 3 4M9 9h1"/></svg></div>
+          <h3><span data-l="id">Pelunasan 2 langkah berbukti</span><span data-l="en">Two-step settlement with proof</span></h3>
+          <p><span data-l="id">Belum Lunas, unggah bukti bayar, lalu dikonfirmasi penerima. Pembayaran tunai boleh tanpa foto bukti.</span><span data-l="en">Unpaid, upload proof of payment, then the recipient confirms. Cash payments may skip the photo.</span></p>
+        </article>
+        <article class="kartu angkat muncul" style="--i:2">
+          <div class="ikon s"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 7h19v4M3 7v17h22V11H3M18 17h3"/></svg></div>
+          <h3><span data-l="id">Keuangan pribadi lengkap</span><span data-l="en">Full personal finance</span></h3>
+          <p><span data-l="id">Dompet terpisah dari piutang grup, anggaran bulanan, target tabungan, kalender finansial, kurs MYR/IDR, dan ekspor CSV.</span><span data-l="en">Wallets kept apart from group debts, monthly budgets, savings goals, a money calendar, MYR/IDR rates and CSV export.</span></p>
+        </article>
+        <article class="kartu angkat muncul lebar" style="--i:1; grid-column: 1 / -1">
+          <div class="ikon b"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M6 13h16v11H6zM9 13V9a5 5 0 0 1 10 0v4M14 17v3"/></svg></div>
+          <h3><span data-l="id">Keamanan dan akses</span><span data-l="en">Security and access</span></h3>
+          <p><span data-l="id">Akun diverifikasi dengan kode OTP 6 angka, kunci biometrik bisa dinyalakan, dan antarmuka tersedia dalam bahasa Indonesia, Inggris, dan Melayu.</span><span data-l="en">Accounts are verified with a 6-digit code, an optional biometric lock is available, and the interface comes in Indonesian, English and Malay.</span></p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-</div>
+  <section id="cara">
+    <div class="wadah">
+      <h2 class="judul-bagian muncul"><span data-l="id">Cara kerja</span><span data-l="en">How it works</span></h2>
+      <p class="pengantar muncul"><span data-l="id">Empat langkah dari struk sampai lunas.</span><span data-l="en">Four steps from receipt to settled.</span></p>
+      <ol class="langkah">
+        <li class="kartu muncul"><span class="nomor">01</span><h3><span data-l="id">Foto atau pilih struk</span><span data-l="en">Snap or pick a receipt</span></h3><p><span data-l="id">Dari kamera atau galeri ponsel.</span><span data-l="en">From the camera or your gallery.</span></p></li>
+        <li class="kartu muncul" style="--i:1"><span class="nomor">02</span><h3><span data-l="id">Tinjau dan koreksi</span><span data-l="en">Review and correct</span></h3><p><span data-l="id">Perbaiki yang keliru, lengkapi yang kosong.</span><span data-l="en">Fix mistakes and fill the blanks.</span></p></li>
+        <li class="kartu muncul" style="--i:2"><span class="nomor">03</span><h3><span data-l="id">Tetapkan ke anggota</span><span data-l="en">Assign to members</span></h3><p><span data-l="id">Tiap barang punya penanggungnya.</span><span data-l="en">Every item gets an owner.</span></p></li>
+        <li class="kartu muncul" style="--i:3"><span class="nomor">04</span><h3><span data-l="id">Unggah bukti, selesai</span><span data-l="en">Upload proof, done</span></h3><p><span data-l="id">Penerima mengonfirmasi, utang tercatat lunas.</span><span data-l="en">The recipient confirms and the debt is marked settled.</span></p></li>
+      </ol>
+    </div>
+  </section>
 
-<dialog id="dialog-ios">
-  <h3>Versi iPhone belum tersedia</h3>
-  <p>
-    Summa untuk iPhone masih dalam tahap pengembangan. Memasang aplikasi uji
-    coba di iPhone memerlukan izin khusus dari Apple yang belum dimiliki.
-  </p>
-  <p>
-    Kamu tetap bisa ikut mencoba. Hubungi peneliti untuk dijadwalkan memakai
-    perangkat yang disediakan.
-  </p>
-  <button class="tombol" type="button" id="tutup-ios" autofocus>Mengerti</button>
+  <section id="privasi">
+    <div class="wadah">
+      <h2 class="judul-bagian muncul"><span data-l="id">Arsitektur AI dan privasi</span><span data-l="en">AI architecture and privacy</span></h2>
+      <p class="pengantar muncul"><span data-l="id">Ke mana foto strukmu pergi saat dipindai.</span><span data-l="en">Where your receipt photo goes when you scan it.</span></p>
+      <ol class="alur">
+        <li class="kartu muncul"><span data-l="id">Kamera ponsel</span><span data-l="en">Phone camera</span><small><span data-l="id">Foto struk</span><span data-l="en">Receipt photo</span></small></li>
+        <li class="kartu muncul" style="--i:1">Supabase<small><span data-l="id">Autentikasi dan gerbang permintaan</span><span data-l="en">Auth and request gateway</span></small></li>
+        <li class="kartu inti muncul" style="--i:2"><span data-l="id">Peladen model Summa</span><span data-l="en">Summa model server</span><small>DBNet + PP-OCRv4 + LayoutLMv3 (Railway)</small></li>
+        <li class="kartu muncul" style="--i:3"><span data-l="id">Layar tinjauan</span><span data-l="en">Review screen</span><small><span data-l="id">Kamu yang memutuskan</span><span data-l="en">You decide</span></small></li>
+      </ol>
+      <div class="privasi">
+        <div class="kartu muncul"><h3><span data-l="id">Peladen sendiri</span><span data-l="en">Our own server</span></h3><p><span data-l="id">Pada versi uji ini seluruh ekstraksi berjalan di peladen model milik Summa yang dihosting di Railway.</span><span data-l="en">In this test build all extraction runs on Summa's own model server, hosted on Railway.</span></p></div>
+        <div class="kartu muncul" style="--i:1"><h3><span data-l="id">VLM nonaktif</span><span data-l="en">VLM is off</span></h3><p><span data-l="id">Penambal VLM nonaktif secara bawaan, sehingga foto struk tidak dikirim ke layanan AI pihak ketiga.</span><span data-l="en">The VLM patcher is off by default, so receipt photos are not sent to third-party AI services.</span></p></div>
+        <div class="kartu muncul" style="--i:2"><h3><span data-l="id">Penyimpanan</span><span data-l="en">Storage</span></h3><p><span data-l="id">Transaksi dan foto yang kamu simpan berada di Supabase milik proyek, dengan aturan akses per pengguna dan per grup.</span><span data-l="en">Transactions and photos you save live in the project's Supabase, with per-user and per-group access rules.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pasang">
+    <div class="wadah dua">
+      <div class="muncul">
+        <h2 class="judul-bagian"><span data-l="id">Cara memasang di Android</span><span data-l="en">Install on Android</span></h2>
+        <p class="pengantar"><span data-l="id">Tiga langkah, tanpa Play Store.</span><span data-l="en">Three steps, no Play Store.</span></p>
+        <ol class="pasang">
+          <li><span><span data-l="id">Ketuk tombol unduh, lalu tunggu berkasnya selesai.</span><span data-l="en">Tap the download button and wait for the file to finish.</span></span></li>
+          <li><span><span data-l="id">Buka berkasnya. Kalau ponsel meminta izin, pilih <strong>Izinkan dari sumber ini</strong>.</span><span data-l="en">Open the file. If your phone asks, choose <strong>Allow from this source</strong>.</span></span></li>
+          <li><span><span data-l="id">Ketuk <strong>Pasang</strong>, lalu buka Summa dan daftar dengan surel.</span><span data-l="en">Tap <strong>Install</strong>, then open Summa and sign up with your email.</span></span></li>
+        </ol>
+        <a class="tombol" href="https://github.com/klissh/summa-web/releases/latest/download/Summa.apk" download><span data-l="id">Unduh Summa.apk</span><span data-l="en">Download Summa.apk</span></a>
+      </div>
+      <div class="muncul" style="--i:1">
+        <h2 class="judul-bagian"><span data-l="id">Tanya jawab</span><span data-l="en">FAQ</span></h2>
+        <p class="pengantar"><span data-l="id">Ketuk pertanyaannya.</span><span data-l="en">Tap a question.</span></p>
+        <details>
+          <summary><span data-l="id">Mengapa muncul peringatan "Bukan dari Play Store"?</span><span data-l="en">Why does it warn "not from the Play Store"?</span></summary>
+          <div><span data-l="id">Itu wajar untuk APK uji coba yang dibagikan langsung. Pilih <strong>Pasang saja</strong>.</span><span data-l="en">That is expected for a test APK shared directly. Choose <strong>Install anyway</strong>.</span></div>
+        </details>
+        <details>
+          <summary><span data-l="id">Bagaimana dengan pengguna Huawei?</span><span data-l="en">What about Huawei users?</span></summary>
+          <div><span data-l="id">APK yang sama ditujukan untuk EMUI atau HarmonyOS 2 sampai 4. Tanpa layanan Google, notifikasi dorong tidak masuk; fitur inti dirancang tetap berjalan.</span><span data-l="en">The same APK targets EMUI or HarmonyOS 2 to 4. Without Google services, push notifications will not arrive; core features are designed to keep working.</span></div>
+        </details>
+        <details>
+          <summary><span data-l="id">Bagaimana jika saya memakai iPhone?</span><span data-l="en">What if I use an iPhone?</span></summary>
+          <div><span data-l="id">Versi iPhone masih dikembangkan. Kamu bisa dijadwalkan mencoba di perangkat yang disediakan.</span><span data-l="en">The iPhone version is still in development. You can arrange to try it on a provided device.</span><br><button class="tombol sunyi kecil buka-ios" type="button"><span data-l="id">Lihat keterangan iPhone</span><span data-l="en">See iPhone details</span></button></div>
+        </details>
+        <details>
+          <summary><span data-l="id">Bagaimana cara mendaftar akun?</span><span data-l="en">How do I create an account?</span></summary>
+          <div><span data-l="id">Masukkan surel, cek kotak masuk (juga folder spam) untuk kode OTP 6 angka, masukkan kodenya di aplikasi, dan kamu langsung masuk.</span><span data-l="en">Enter your email, check your inbox (and spam folder) for a 6-digit code, type it into the app, and you are signed in.</span></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <div class="wadah">
+    <div class="kartu ajakan muncul">
+      <h2><span data-l="id">Coba, lalu beri tahu kami pendapatmu.</span><span data-l="en">Try it, then tell us what you think.</span></h2>
+      <a class="tombol" href="https://github.com/klissh/summa-web/releases/latest/download/Summa.apk" download><span data-l="id">Unduh untuk Android (.apk)</span><span data-l="en">Download for Android (.apk)</span></a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wadah">
+    <p><span data-l="id">Summa: artefak skripsi D4 Teknik Informatika, Politeknik Negeri Jakarta (PNJ) dan Management and Science University (MSU). Versi uji coba penelitian.</span><span data-l="en">Summa: a D4 Informatics Engineering thesis artefact, Politeknik Negeri Jakarta (PNJ) and Management and Science University (MSU). Research test build.</span></p>
+  </div>
+</footer>
+
+<dialog id="dialog-ios" aria-labelledby="judul-ios">
+  <h3 id="judul-ios"><span data-l="id">Versi iPhone belum tersedia</span><span data-l="en">iPhone version not available yet</span></h3>
+  <p><span data-l="id">Summa untuk iPhone masih dalam tahap pengembangan. Memasang aplikasi uji coba di iPhone memerlukan izin khusus dari Apple yang belum dimiliki.</span><span data-l="en">Summa for iPhone is still in development. Installing a test app on iPhone needs special permission from Apple that we do not have yet.</span></p>
+  <p><span data-l="id">Kamu tetap bisa ikut mencoba. Hubungi peneliti untuk dijadwalkan memakai perangkat yang disediakan.</span><span data-l="en">You can still take part. Contact the researcher to arrange a session on a provided device.</span></p>
+  <button class="tombol" type="button" id="tutup-ios" autofocus><span data-l="id">Mengerti</span><span data-l="en">Got it</span></button>
 </dialog>
 
 <script>
+(function () {
+  var akar = document.documentElement;
+  var tenang = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function semua(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
+  function simpan(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  /* bahasa */
+  function pakaiBahasa(l) {
+    akar.lang = l;
+    semua('[data-bahasa]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bahasa === l)); });
+    document.title = l === 'en' ? 'Summa: scan receipts, settle splits' : 'Summa: pindai struk, patungan beres';
+  }
+  pakaiBahasa(akar.lang === 'en' ? 'en' : 'id');
+  semua('[data-bahasa]').forEach(function (b) {
+    b.addEventListener('click', function () { pakaiBahasa(b.dataset.bahasa); simpan('summa_bahasa', b.dataset.bahasa); });
+  });
+
+  /* tema */
+  document.getElementById('tema').addEventListener('click', function () {
+    var kini = akar.getAttribute('data-theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var baru = kini === 'dark' ? 'light' : 'dark';
+    akar.setAttribute('data-theme', baru);
+    simpan('summa_tema', baru);
+  });
+
+  /* bilah progres */
+  var bilah = document.querySelector('.progres'), menunggu = false;
+  function ukur() {
+    var sisa = akar.scrollHeight - window.innerHeight;
+    bilah.style.transform = 'scaleX(' + (sisa > 0 ? Math.min(1, window.scrollY / sisa) : 0) + ')';
+    menunggu = false;
+  }
+  window.addEventListener('scroll', function () { if (!menunggu) { menunggu = true; requestAnimationFrame(ukur); } }, { passive: true });
+  window.addEventListener('resize', ukur);
+  ukur();
+
+  /* muncul saat digulir */
+  var muncul = semua('.muncul');
+  if ('IntersectionObserver' in window) {
+    var pengamat = new IntersectionObserver(function (daftar) {
+      daftar.forEach(function (d) {
+        if (d.isIntersecting) { d.target.classList.add('tampak'); pengamat.unobserve(d.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    muncul.forEach(function (el) { pengamat.observe(el); });
+  } else {
+    muncul.forEach(function (el) { el.classList.add('tampak'); });
+  }
+
+  /* tab peraga ponsel: berputar sendiri sampai disentuh pengguna */
+  var tab = semua('[role="tab"]'), panel = semua('[role="tabpanel"]'), aktif = 0, putar = null;
+  var peraga = document.querySelector('.peraga'), tombolJeda = document.getElementById('jeda'), dijeda = false;
+  function pilih(n) {
+    aktif = (n + tab.length) % tab.length;
+    tab.forEach(function (t, i) { t.setAttribute('aria-selected', String(i === aktif)); t.tabIndex = i === aktif ? 0 : -1; });
+    panel.forEach(function (p, i) { p.classList.toggle('aktif', i === aktif); });
+  }
+  function berhenti() { clearInterval(putar); putar = null; }
+  tab.forEach(function (t, i) {
+    t.addEventListener('click', function () { berhenti(); pilih(i); });
+    t.addEventListener('keydown', function (e) {
+      var arah = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!arah) return;
+      e.preventDefault(); berhenti(); pilih(i + arah); tab[aktif].focus();
+    });
+  });
+  if (!tenang) {
+    putar = setInterval(function () {
+      if (!dijeda && !peraga.matches(':hover') && !peraga.contains(document.activeElement)) pilih(aktif + 1);
+    }, 6500);
+  }
+
+  /* jeda untuk peraga dan pita */
+  var pita = document.querySelector('.pita');
+  tombolJeda.addEventListener('click', function () {
+    dijeda = !dijeda;
+    tombolJeda.setAttribute('aria-pressed', String(dijeda));
+    peraga.classList.toggle('jeda', dijeda);
+    pita.classList.toggle('jeda', dijeda);
+    tombolJeda.querySelector('[data-l="id"]').textContent = dijeda ? 'Putar animasi' : 'Jeda animasi';
+    tombolJeda.querySelector('[data-l="en"]').textContent = dijeda ? 'Play motion' : 'Pause motion';
+  });
+  pita.addEventListener('click', function () { pita.classList.toggle('jeda'); });
+
+  /* salinan isi pita supaya gesernya menyambung tanpa jeda */
+  var salinan = pita.querySelector('ul').cloneNode(true);
+  salinan.setAttribute('aria-hidden', 'true');
+  pita.querySelector('.rel').appendChild(salinan);
+
+  /* keterangan iPhone */
   var dialog = document.getElementById('dialog-ios');
-  document.getElementById('tombol-ios').addEventListener('click', function () {
-    // showModal mengunci fokus dan menyediakan tombol Esc tanpa kode tambahan.
-    if (typeof dialog.showModal === 'function') dialog.showModal();
-    else alert('Versi iPhone masih dalam tahap pengembangan. Hubungi peneliti untuk mencoba Summa di perangkat yang disediakan.');
+  semua('.buka-ios').forEach(function (b) {
+    b.addEventListener('click', function () {
+      // showModal mengunci fokus dan menyediakan tombol Esc tanpa kode tambahan.
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else alert(akar.lang === 'en'
+        ? 'The iPhone version is still in development. Contact the researcher to try Summa on a provided device.'
+        : 'Versi iPhone masih dalam tahap pengembangan. Hubungi peneliti untuk mencoba Summa di perangkat yang disediakan.');
+    });
   });
-  document.getElementById('tutup-ios').addEventListener('click', function () {
-    dialog.close();
-  });
+  document.getElementById('tutup-ios').addEventListener('click', function () { dialog.close(); });
+})();
 </script>
 </body>
 </html>
